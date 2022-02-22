@@ -1,0 +1,22 @@
+[Desktop Entry]
+Type=Application
+Categories=Settings;System;Qt;X-SuSE-YaST;X-SuSE-YaST-Software;
+
+X-KDE-ModuleType=Library
+X-SuSE-YaST-Call=migration-sle
+
+X-SuSE-YaST-Group=Software
+X-SuSE-YaST-Argument=
+X-SuSE-YaST-RootOnly=true
+X-SuSE-YaST-Geometry=
+X-SuSE-YaST-SortKey=
+X-SuSE-YaST-Keywords=sle,sles,enterprise,migration,registration
+
+Icon=yast-migration
+Exec=xdg-su -c "/sbin/yast2 migration-sle"
+
+Name=YaST Online Migration to SLES
+
+GenericName=Online SLES Migration
+Comment=Migrate to the SUSE Linux Enterprise Server product
+StartupNotify=true
