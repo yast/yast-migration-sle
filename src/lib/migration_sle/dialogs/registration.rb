@@ -24,6 +24,13 @@ require "registration/widgets/registration_code"
 
 Yast.import "OSRelease"
 
+# define the yardoc macros:
+#
+# @!macro [new] seeAbstractWidget
+#   @see http://www.rubydoc.info/github/yast/yast-yast2/CWM/AbstractWidget:${0}
+# @!macro [new] seeDialog
+#   @see http://www.rubydoc.info/github/yast/yast-yast2/CWM/Dialog:${0}
+
 module MigrationSle
   module Dialogs
     # The initial dialog for the Leap to SLES migration.
