@@ -52,15 +52,16 @@ module MigrationSle
   private
 
     WORKFLOW_SEQUENCE = {
-      "ws_start"             => "start",
-      "start"                   => {
-        start:                   "system_check",
-        restart_after_update:    "registration"
+      # FIXME: it should be "start", make development easier for now...
+      "ws_start"             => "registration",
+      "start"                => {
+        start:                "system_check",
+        restart_after_update: "registration"
         # restart_after_migration: "migration_finish"
       },
       "system_check"         => {
-        abort:                   :abort,
-        next:                    "online_update",
+        abort: :abort,
+        next:  "online_update"
       },
       "online_update"        => {
         abort:   :abort,
@@ -130,6 +131,7 @@ module MigrationSle
     def registration
       # already registered
       return :next if Registration::Registration.is_registered?
+
       # Yast::Debugger.start
 
       MigrationSle::Dialogs::Registration.run
