@@ -28,7 +28,10 @@ Yast.import "Wizard"
 
 require "migration/restarter"
 require "migration/patches"
+require "registration/helpers"
 require "registration/registration"
+require "registration/registration_ui"
+require "registration/storage"
 
 require "migration_sle/dialogs/registration"
 
@@ -37,7 +40,6 @@ module MigrationSle
   # the migration workflow.
   class MainWorkflow < ::Migration::MainWorkflow
     def run
-      # Yast::Debugger.start
       textdomain "migration_sle"
 
       begin
@@ -52,8 +54,7 @@ module MigrationSle
   private
 
     WORKFLOW_SEQUENCE = {
-      # FIXME: it should be "start", make development easier for now...
-      "ws_start"             => "registration",
+      "ws_start"             => "start",
       "start"                => {
         start:                "system_check",
         restart_after_update: "registration"
@@ -93,14 +94,22 @@ module MigrationSle
     end
 
     def system_check
-      return :next if opensuse_leap?
+      if !opensuse_leap?
+        # TRANSLATORS: Error message, this YaST module is designed only for openSUSE systems
+        # %s is replaced by the product name from /etc/os-release file
+        Yast::Report.Error(_("Migration to the SUSE Linux Enterprise Server product\n" \
+                            "is supported only from the openSUSE Leap distribution.\n\n"\
+                            "Installed distribution: %s") % Yast::OSRelease.ReleaseInformation)
+        return :abort
+      end
 
-      # TRANSLATORS: Error message, this YaST module is designed only for openSUSE systems
-      # %s is replaced by the product name from /etc/os-release file
-      Yast::Report.Error(_("Migration to the SUSE Linux Enterprise Server product\n" \
-                           "is supported only from the openSUSE Leap distribution.\n\n"\
-                           "Installed distribution: %s") % Yast::OSRelease.ReleaseInformation)
-      :abort
+      Registration::SwMgmt.init
+      if !Registration::SwMgmt.find_base_product
+        Registration::Helpers.report_no_base_product
+        return :abort
+      end
+
+      :next
     end
 
     # evaluate the starting point for the workflow, start from the beginning
@@ -132,9 +141,37 @@ module MigrationSle
       # already registered
       return :next if Registration::Registration.is_registered?
 
-      # Yast::Debugger.start
+      registration_dialog = MigrationSle::Dialogs::Registration.new
 
-      MigrationSle::Dialogs::Registration.run
+      ret = nil
+      loop do
+        ret = registration_dialog.run
+
+        break if [:abort, :close ].include?(ret)
+
+        reg_code = registration_dialog.reg_code
+        # SMT/RMT URL entered
+        if reg_code =~ /^https{0,1}:\/\//
+          url = reg_code
+          reg_code = ""
+          log.info "Using registration URL: #{url}"
+        end
+
+        registration = Registration::Registration.new(url)
+        registration_ui = Registration::RegistrationUI.new(registration)
+
+        options = Registration::Storage::InstallationOptions.instance
+        options.email = registration_dialog.email
+        options.reg_code = reg_code
+
+        success, _service = registration_ui.register_system_and_base_product
+
+        break if success
+
+        Registration::Helpers.reset_registration_status
+      end
+
+      ret
     end
 
     # Running in an openSUSE Leap distribution?

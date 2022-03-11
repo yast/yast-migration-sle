@@ -20,7 +20,6 @@
 require "yast"
 
 require "cwm/dialog"
-require "registration/widgets/registration_code"
 
 Yast.import "OSRelease"
 
@@ -40,8 +39,6 @@ module MigrationSle
       # Constructor
       def initialize
         textdomain "migration_sle"
-
-        @reg_code_widget = ::Registration::Widgets::RegistrationCode.new
         super
       end
 
@@ -56,7 +53,9 @@ module MigrationSle
                 # TRANSLATORS: input field label
                 MinWidth(35, InputField(Id(:email), _("&E-mail Address"), "")),
                 VSpacing(2),
-                MinWidth(35, reg_code_widget)
+                MinWidth(35, InputField(Id(:reg_code),
+                # TRANSLATORS: input field label
+                _("Registration Code or RMT Server URL"), ""))
               )
             ),
           VSpacing(4),
@@ -87,7 +86,7 @@ module MigrationSle
       def run
         ret = super
 
-        @reg_code = reg_code_widget.value
+        @reg_code = Yast::UI.QueryWidget(Id(:reg_code), :Value)
         @email = Yast::UI.QueryWidget(Id(:email), :Value)
 
         ret
