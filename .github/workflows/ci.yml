@@ -27,10 +27,11 @@ jobs:
         COVERAGE: 1
 
     # send the coverage report to coveralls.io
-    - name: Coveralls Report
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+    # FIXME: temporarily disabled, no tests so far...
+    # - name: Coveralls Report
+    #   uses: coverallsapp/github-action@master
+    #   with:
+    #     github-token: ${{ secrets.GITHUB_TOKEN }}
 
   Rubocop:
     runs-on: ubuntu-latest
