@@ -17,7 +17,7 @@
 
 
 Name:           yast2-migration-sle
-Version:        4.4.0
+Version:        4.4.0.pre1
 Release:        0
 Summary:        YaST2 - Online migration
 Group:          System/YaST
