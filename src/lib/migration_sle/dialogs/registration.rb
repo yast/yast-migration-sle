@@ -109,7 +109,7 @@ module MigrationSle
       def help
         # TRANSLATORS: help text for the main dialog of the online search feature,
         # the "%{to_system}" is replaced by the target system name, e.g.
-        # "SUSE Linux Enterprise", the "%{web}" is replaced by a http:// link
+        # "SUSE Linux Enterprise", the "%{web}" is replaced by a https:// link
         text = _(<<-HELP
 <h2>Online Migration to %{to_system}</h2>
 <p>
