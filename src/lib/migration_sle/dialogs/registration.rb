@@ -36,6 +36,8 @@ module MigrationSle
     class Registration < CWM::Dialog
       attr_reader :email, :reg_code
 
+      TARGET_SYSTEM = "SUSE Linux Enterprise".freeze
+
       # Constructor
       def initialize
         textdomain "migration_sle"
@@ -47,17 +49,7 @@ module MigrationSle
         VBox(
           VStretch(),
           Heading(heading),
-          VSpacing(2),
-          HSquash(
-              VBox(
-                # TRANSLATORS: input field label
-                MinWidth(35, InputField(Id(:email), _("&E-mail Address"), "")),
-                VSpacing(2),
-                MinWidth(35, InputField(Id(:reg_code),
-                # TRANSLATORS: input field label
-                _("Registration Code or RMT Server URL"), ""))
-              )
-            ),
+          *input_fields,
           VSpacing(4),
           HBox(
             HSpacing(6),
@@ -70,7 +62,7 @@ module MigrationSle
                   _("This module can migrate the system from %{from_system}" \
                     " to %{to_system} online. See more details in the help text."),
                   from_system: current_system,
-                  to_system:   target_system
+                  to_system:   TARGET_SYSTEM
                 ))
             ),
             HStretch()
@@ -86,6 +78,7 @@ module MigrationSle
       def run
         ret = super
 
+        # store the input values
         @reg_code = Yast::UI.QueryWidget(Id(:reg_code), :Value)
         @email = Yast::UI.QueryWidget(Id(:email), :Value)
 
@@ -97,6 +90,7 @@ module MigrationSle
         Yast::Label.CancelButton
       end
 
+      # @macro seeDialog
       def next_button
         # TRANSLATORS: push button label
         _("&Migrate")
@@ -109,9 +103,13 @@ module MigrationSle
       end
 
       # @macro seeDialog
+      # note: the text cannot be indented and <<~ used because "rake pot"
+      # does not remove the indentation and the text would not match the translations
       # rubocop:disable Layout/HeredocIndentation, Metrics/MethodLength
       def help
-        # TRANSLATORS: help text for the main dialog of the online search feature
+        # TRANSLATORS: help text for the main dialog of the online search feature,
+        # the "%{to_system}" is replaced by the target system name, e.g.
+        # "SUSE Linux Enterprise", the "%{web}" is replaced by a http:// link
         text = _(<<-HELP
 <h2>Online Migration to %{to_system}</h2>
 <p>
@@ -168,7 +166,7 @@ module MigrationSle
                 )
         # rubocop:enable Layout/HeredocIndentation, Metrics/MethodLength
 
-        format(text, to_system: target_system, web: "https://www.suse.com/support/")
+        format(text, to_system: TARGET_SYSTEM, web: "https://www.suse.com/support/")
       end
 
     private
@@ -179,18 +177,32 @@ module MigrationSle
         Yast::OSRelease.ReleaseName
       end
 
-      def target_system
-        "SUSE Linux Enterprise"
-      end
-
       def heading
         from_system = Yast::OSRelease.ReleaseInformation
 
         format(
           _("Migrate from %{from_system} to %{to_system}"),
           from_system: from_system,
-          to_system:   target_system
+          to_system:   TARGET_SYSTEM
         )
+      end
+
+      def input_fields
+        return Empty() if ::Registration::Registration.is_registered?
+
+        [
+          VSpacing(2),
+          HSquash(
+              VBox(
+                # TRANSLATORS: input field label
+                MinWidth(35, InputField(Id(:email), _("&E-mail Address"), "")),
+                VSpacing(2),
+                MinWidth(35, InputField(Id(:reg_code),
+                  # TRANSLATORS: input field label
+                  _("Registration Code or RMT Server URL"), ""))
+              )
+            )
+        ]
       end
     end
   end

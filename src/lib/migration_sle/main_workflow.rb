@@ -34,6 +34,7 @@ require "registration/registration_ui"
 require "registration/storage"
 
 require "migration_sle/dialogs/registration"
+require "migration_sle/repos_workflow"
 
 module MigrationSle
   # The goal of this class is to provide main single entry point to start
@@ -44,7 +45,7 @@ module MigrationSle
 
       begin
         Yast::Wizard.CreateDialog
-        Yast::Sequencer.Run(aliases, WORKFLOW_SEQUENCE)
+        Yast::Sequencer.Run(workflow_aliases, WORKFLOW_SEQUENCE)
       ensure
         vendor_cleanup
         Yast::Wizard.CloseDialog
@@ -54,52 +55,119 @@ module MigrationSle
   private
 
     WORKFLOW_SEQUENCE = {
-      "ws_start"             => "start",
-      "start"                => {
-        start:                "system_check",
-        restart_after_update: "registration"
-        # restart_after_migration: "migration_finish"
+      "ws_start"                => "start",
+      "start"                   => {
+        start:                   "system_check",
+        restart_after_update:    "registration",
+        restart_after_migration: "migration_finish"
       },
-      "system_check"         => {
+      "system_check"            => {
         abort: :abort,
         next:  "online_update"
       },
-      "online_update"        => {
+      "online_update"           => {
         abort:   :abort,
         restart: "restart_after_update",
         next:    "registration"
       },
-      "restart_after_update" => {
+      "restart_after_update"    => {
         restart: :restart
       },
-      "registration"         => {
+      "registration"            => {
         abort: :abort,
-        next:  "migration"
+        next:  "create_pre_snapshot"
       },
-      "migration"            => {
+      # copied from yast2-migration
+      "create_pre_snapshot"     => {
+        next: "create_backup"
+      },
+      "create_backup"           => {
+        next: "repositories"
+      },
+      "repositories"            => {
+        abort:    :abort,
+        rollback: "rollback",
+        next:     "license"
+      },
+      "license"                 => {
+        abort: "rollback",
+        next:  "proposals"
+      },
+      "proposals"               => {
+        abort: "rollback",
+        next:  "perform_migration"
+      },
+      "rollback"                => {
+        abort: :abort,
+        next:  :next
+      },
+      "perform_migration"       => {
+        abort: :abort,
+        next:  "restart_after_migration"
+      },
+      "restart_after_migration" => {
+        restart: :restart
+      },
+      # NOTE: the steps after the YaST restart use the new code from
+      # the updated (migrated) yast2-migration package!!
+      "migration_finish"        => {
+        abort: :abort,
+        next:  "create_post_snapshot"
+      },
+      "create_post_snapshot"    => {
+        next: "finish_dialog"
+      },
+      "finish_dialog"           => {
         abort: :abort,
         next:  :next
       }
     }.freeze
 
-    def aliases
+    # rubocop:disable Metrics/AbcSize
+    def workflow_aliases
       {
-        "start"                => -> { start },
-        "system_check"         => -> { system_check },
-        "online_update"        => -> { online_update },
-        "restart_after_update" => -> { restart_yast(:restart_after_update) },
-        "registration"         => -> { registration },
-        "migration"            => -> { migration }
+        "start"                   => -> { start },
+        "system_check"            => -> { system_check },
+        "online_update"           => -> { online_update },
+        "restart_after_update"    => -> { restart_yast(:restart_after_update) },
+        "registration"            => -> { registration_step },
+        # copied from yast2-migration
+        "create_pre_snapshot"     => -> { create_pre_snapshot },
+        "create_backup"           => -> { create_backup },
+        "rollback"                => -> { rollback },
+        "perform_migration"       => -> { perform_migration },
+        "proposals"               => -> { proposals },
+        "repositories"            => -> { repositories },
+        "license"                 => -> { license },
+        "restart_after_migration" => -> { restart_yast(:restart_after_migration) },
+        # NOTE: the steps after the YaST restart use the new code from
+        # the updated (migrated) yast2-migration package!!
+        "migration_finish"        => -> { migration_finish },
+        "create_post_snapshot"    => -> { create_post_snapshot },
+        "finish_dialog"           => -> { finish_dialog }
       }
     end
+    # rubocop:enable Metrics/AbcSize
 
+    # check if the system is supported for migration (only openSUSE Leap is supported)
+    # and that the installed base product can be correctly found by the package manager
+    # @return [Symbol] worklow symbol, either :next or :abort
     def system_check
       if !opensuse_leap?
         # TRANSLATORS: Error message, this YaST module is designed only for openSUSE systems
-        # %s is replaced by the product name from /etc/os-release file
-        Yast::Report.Error(_("Migration to the SUSE Linux Enterprise Server product\n" \
-                            "is supported only from the openSUSE Leap distribution.\n\n"\
-                            "Installed distribution: %s") % Yast::OSRelease.ReleaseInformation)
+        # the "%{target_system}" is replaced by the target system name, e.g.
+        # "SUSE Linux Enterprise",
+        # the "%{supported_system}" is replaced by the name of the supported system,
+        # e.g. "openSUSE Leap"
+        # the "%{current_system}" is replaced by current system name
+        Yast::Report.Error(
+          format(_("Migration to the %{target_system} product\n" \
+                   "is supported only from the %{supported_system} system.\n\n"\
+                   "The installed distribution: %{current_system}"),
+            target_system:    MigrationSle::Dialogs::Registration::TARGET_SYSTEM,
+            supported_system: "openSUSE Leap",
+            current_system:   Yast::OSRelease.ReleaseInformation)
+        )
         return :abort
       end
 
@@ -137,17 +205,16 @@ module MigrationSle
       :restart
     end
 
-    def registration
-      # already registered
-      return :next if Registration::Registration.is_registered?
-
+    def registration_step
       registration_dialog = MigrationSle::Dialogs::Registration.new
 
       ret = nil
       loop do
         ret = registration_dialog.run
 
-        break if [:abort, :close ].include?(ret)
+        break if [:abort, :close].include?(ret)
+        # already registered
+        return :next if Registration::Registration.is_registered?
 
         reg_code = registration_dialog.reg_code
         # SMT/RMT URL entered
@@ -161,6 +228,7 @@ module MigrationSle
         registration_ui = Registration::RegistrationUI.new(registration)
 
         options = Registration::Storage::InstallationOptions.instance
+        options.custom_url = url
         options.email = registration_dialog.email
         options.reg_code = reg_code
 
@@ -172,6 +240,12 @@ module MigrationSle
       end
 
       ret
+    end
+
+    def repositories
+      prepare_repos
+
+      ReposWorkflow.new.main
     end
 
     # Running in an openSUSE Leap distribution?
