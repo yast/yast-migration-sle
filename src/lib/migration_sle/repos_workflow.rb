@@ -27,12 +27,12 @@ module MigrationSle
 
   private
 
-    # select the SLES migration automatically, if there are multiple SLES
-    # migrations let the user select one
+    # select the SLE migration automatically, if there are multiple SLE
+    # migrations let the user to select one
     # @return [Symbol] workflow symbol (:next or :abort)
     def select_migration_products
-      sles_migrations = find_sles_migrations
-      case sles_migrations.size
+      sle_migrations = find_sle_migrations
+      case sle_migrations.size
       when 0
         # TRANSLATORS: error message
         Yast::Report.Error(_("No SUSE Linux Enterprise migration available.\n" \
@@ -41,7 +41,7 @@ module MigrationSle
                              "Try it later or check your subscription."))
         :abort
       when 1
-        self.selected_migration = sles_migrations.first
+        self.selected_migration = sle_migrations.first
         log.info "Automatically selected migration: #{selected_migration}"
         :next
       else
@@ -50,12 +50,12 @@ module MigrationSle
       end
     end
 
-    def find_sles_migrations
-      # migrate to SLES with the same version as the current Leap
+    def find_sle_migrations
+      # migrate to SLE with the same version as the current Leap
       version = Yast::OSRelease.ReleaseVersion
 
       migrations.select do |m|
-        m.any? { |p| p.identifier == "SLES" && p.version == version }
+        m.any? { |p| p.identifier.start_with?("SLE") && p.version == version }
       end
     end
   end

@@ -248,6 +248,11 @@ module MigrationSle
       ReposWorkflow.new.main
     end
 
+    def rollback
+       Yast::Wizard.ClearContents
+       super
+    end
+
     # Running in an openSUSE Leap distribution?
     #
     # @return [Boolean] True if running in an openSUSE Leap distribution, false otherwise
