@@ -3,7 +3,7 @@ Type=Application
 Categories=Settings;System;Qt;X-SuSE-YaST;X-SuSE-YaST-Software;
 
 X-KDE-ModuleType=Library
-X-SuSE-YaST-Call=migration-sle
+X-SuSE-YaST-Call=migration_sle
 
 X-SuSE-YaST-Group=Software
 X-SuSE-YaST-Argument=
@@ -13,10 +13,10 @@ X-SuSE-YaST-SortKey=
 X-SuSE-YaST-Keywords=sle,sles,enterprise,migration,registration
 
 Icon=yast-migration
-Exec=xdg-su -c "/sbin/yast2 migration-sle"
+Exec=xdg-su -c "/sbin/yast2 migration_sle"
 
-Name=YaST Online Migration to SLES
+Name=Migration to SUSE Linux Enterprise
 
-GenericName=Online SLES Migration
-Comment=Migrate to the SUSE Linux Enterprise Server product
+GenericName=Migration to SUSE Linux Enterprise
+Comment=Online migration from the openSUSE Leap to the SUSE Linux Enterprise
 StartupNotify=true
