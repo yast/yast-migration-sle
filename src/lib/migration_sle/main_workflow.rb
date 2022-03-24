@@ -249,8 +249,8 @@ module MigrationSle
     end
 
     def rollback
-       Yast::Wizard.ClearContents
-       super
+      Yast::Wizard.ClearContents
+      super
     end
 
     # Running in an openSUSE Leap distribution?
