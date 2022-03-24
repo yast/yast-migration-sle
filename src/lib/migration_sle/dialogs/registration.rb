@@ -20,6 +20,7 @@
 require "yast"
 
 require "cwm/dialog"
+require "registration/registration"
 
 Yast.import "OSRelease"
 
@@ -33,6 +34,7 @@ Yast.import "OSRelease"
 module MigrationSle
   module Dialogs
     # The initial dialog for the Leap to SLES migration.
+    # If the system is not registered it displays the registration input fields.
     class Registration < CWM::Dialog
       attr_reader :email, :reg_code
 
@@ -171,24 +173,33 @@ module MigrationSle
 
     private
 
-      attr_reader :reg_code_widget
-
+      # Distribution name from /etc/os-release
+      # @return [String] distribution name
       def current_system
         Yast::OSRelease.ReleaseName
       end
 
+      # dialog heading with the distribution names
+      # @return [String] translated text
       def heading
         from_system = Yast::OSRelease.ReleaseInformation
 
         format(
+          # TRANSLATORS: dialog heading
+          # %{from_system} is replaced by the current system, e.g.
+          #   "openSUSE Leap 15.4"
+          # %{to_system} is replaced by the target system,
+          #   "SUSE Linux Enterprise"
           _("Migrate from %{from_system} to %{to_system}"),
           from_system: from_system,
           to_system:   TARGET_SYSTEM
         )
       end
 
+      # Widgets displayed in the main dialog
+      # @return [Array<Yast::Term>] widget list
       def input_fields
-        return Empty() if ::Registration::Registration.is_registered?
+        return [Empty()] if ::Registration::Registration.is_registered?
 
         [
           VSpacing(2),

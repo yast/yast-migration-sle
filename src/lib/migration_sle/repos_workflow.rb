@@ -17,6 +17,9 @@ require "registration/ui/migration_repos_workflow"
 module MigrationSle
   # The goal of this class is to provide main single entry point to start
   # the migration workflow.
+  # It basically reuses the migration workflow from yast2-migration,
+  # it just skips the migration selection dialog and automatically
+  # selects a SLE migration when there is only one SLE migration possible.
   class ReposWorkflow < Registration::UI::MigrationReposWorkflow
     # the constructor
     def initialize
@@ -45,11 +48,13 @@ module MigrationSle
         log.info "Automatically selected migration: #{selected_migration}"
         :next
       else
-        log.info "Multiple SLES migrations found, running the selection dialog..."
+        log.info "Multiple SLE migrations found, running the selection dialog..."
         super
       end
     end
 
+    # Select the SLE migrations from all possible migrations
+    # @return [Array<OpenStruct>] SLE migrations
     def find_sle_migrations
       # migrate to SLE with the same version as the current Leap
       version = Yast::OSRelease.ReleaseVersion

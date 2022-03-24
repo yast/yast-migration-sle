@@ -38,7 +38,7 @@ require "migration_sle/repos_workflow"
 
 module MigrationSle
   # The goal of this class is to provide main single entry point to start
-  # the migration workflow.
+  # the simplified SLE migration workflow.
   class MainWorkflow < ::Migration::MainWorkflow
     def run
       textdomain "migration_sle"

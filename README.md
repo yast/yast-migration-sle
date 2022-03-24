@@ -44,19 +44,22 @@ https://www.suse.com/download/sles/ (you need to have a SUSE account for that).
    RMT/SMT server (email and registration code are not required in that case)
 3. Registration - the system is registered to the registration server and
    the openSUSE Leap repositories from the server are added into the system
-4. Migration - the registration is then migrated to the SLE product and the
+4. Selecting a migration - if only one migration to a SLE product is available
+   then it is automatically selected, if there are multiple migrations a selection
+   dialog is displayed and the user needs to select the migration manually
+5. Migration - the registration is then migrated to the selected SLE product and the
    Leap repositories are changed to the SLE repositories
-5. License agreement - displays the SLE product license and requires accepting it,
+6. License agreement - displays the SLE product license and requires accepting it,
    if the license is not accepted the migration is aborted (see the [rollback](
    #rollback) section below)
-6. Migration summary - the dialog displays the summary about the installed or
+7. Migration summary - the dialog displays the summary about the installed or
    upgraded products and packages, if there is a package dependency problem
    then it needs to be manually resolved before continuing
-7. Package installation - the SLE packages are installed into the system, this can
+8. Package installation - the SLE packages are installed into the system, this can
    take some time
-8. Congratulation - a congratulation dialog is displayed to confirm a successful
+9. Congratulation - a congratulation dialog is displayed to confirm a successful
    migration
-9. Reboot - it is recommended to manually reboot the system to ensure all changes
+10. Reboot - it is recommended to manually reboot the system to ensure all changes
    take effect
 
 #### Rollback
