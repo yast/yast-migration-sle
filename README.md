@@ -28,7 +28,7 @@ https://www.suse.com/download/sles/ (you need to have a SUSE account for that).
 - Simplified workflow for migrating openSUSE Leap installations
   to SUSE Linux Enterprise (SLE) product
 - Can register against [SUSE Customer Service](https://scc.suse.com/) (SCC)
-  server or any local [RMT](https://github.com/SUSE/rmt)/SMT server
+  server or any local [RMT](https://github.com/SUSE/rmt) or SMT server
 - Supports [rollback](#rollback) when the migration fails or is aborted
 - Because openSUSE Leap shares many packages with SLE the migration should
   usually install just few packages, it should not completely reinstall the system
