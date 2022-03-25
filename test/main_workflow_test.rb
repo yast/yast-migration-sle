@@ -57,7 +57,7 @@ describe MigrationSle::MainWorkflow do
           allow(Registration::Helpers).to receive(:report_no_base_product)
         end
 
-        it "displays an error message if base product is not found" do
+        it "displays an error message" do
           expect(Registration::Helpers).to receive(:report_no_base_product)
           subject.run
         end
