@@ -30,6 +30,8 @@ BuildRequires:  update-desktop-files
 BuildRequires:  yast2
 BuildRequires:  yast2-buildtools
 BuildRequires:  yast2-ruby-bindings
+BuildRequires:  yast2-migration
+BuildRequires:  yast2-registration
 BuildRequires:  rubygem(%{rb_default_ruby_abi}:rspec)
 BuildRequires:  rubygem(%{rb_default_ruby_abi}:yast-rake)
 
