@@ -32,6 +32,7 @@ require "registration/helpers"
 require "registration/registration"
 require "registration/registration_ui"
 require "registration/storage"
+require "registration/sw_mgmt"
 
 require "migration_sle/dialogs/registration"
 require "migration_sle/repos_workflow"
