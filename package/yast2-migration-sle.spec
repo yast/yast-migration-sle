@@ -45,7 +45,7 @@ Supplements:    yast2-registration
 BuildArch:      noarch
 
 %description
-This package contains the YaST2 component for migrating an openSUSE
+This package contains the YaST2 component for migrating an openSUSE Leap
 system to the SUSE Linux Enterprise (SLE) system.
 
 %prep
