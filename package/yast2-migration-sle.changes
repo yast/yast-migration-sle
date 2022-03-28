@@ -1,0 +1,17 @@
+-------------------------------------------------------------------
+Fri Mar 25 15:20:58 UTC 2022 - Ladislav Slezák <lslezak@suse.cz>
+
+- Updated README
+- Fixed starting the module from the control center
+- Allow migration to SLED or other products if supported by SCC
+- Added unit tests
+- Fixed build problems
+- First public release (related to jsc#SLE-17309)
+- 4.4.0
+
+-------------------------------------------------------------------
+Tue Feb 22 07:35:42 UTC 2022 - Ladislav Slezák <lslezak@suse.cz>
+
+- Initial version
+- 4.4.0.pre1
+
