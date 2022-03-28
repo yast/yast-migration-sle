@@ -3,6 +3,10 @@ require "cwm/rspec"
 require "migration_sle/dialogs/registration"
 
 describe MigrationSle::Dialogs::Registration do
+  before do
+    allow(Yast::OSRelease).to receive(:ReleaseInformation).and_return("openSUSE Leap 15.4")
+  end
+
   include_examples "CWM::Dialog"
 
   describe "#help" do
