@@ -17,6 +17,10 @@ describe MigrationSle::MainWorkflow do
     }
   end
 
+  before do
+    allow(Yast::OSRelease).to receive(:ReleaseInformation).and_return("openSUSE Leap 15.4")
+  end
+
   describe "#run" do
     before do
       allow(Yast::Wizard).to receive(:CreateDialog)

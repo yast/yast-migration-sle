@@ -6,6 +6,11 @@ describe MigrationSle::ReposWorkflow do
 
   describe "#select_migration_products" do
     before do
+      # avoid SLP network scan
+      # note: the scan is done in the constructor, make sure it is mocked
+      # *before* calling "subject"
+      allow(Registration::UrlHelpers).to receive(:registration_url)
+
       allow(Yast::OSRelease).to receive(:ReleaseVersion).and_return("15.4")
       allow(subject).to receive(:migrations).and_return(migrations)
     end
