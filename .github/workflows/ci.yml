@@ -9,7 +9,7 @@ jobs:
   Tests:
     runs-on: ubuntu-latest
     container:
-      image: registry.opensuse.org/yast/sle-15/sp4/containers/yast-ruby:latest
+      image: registry.opensuse.org/yast/head/containers/yast-ruby:latest
 
     steps:
 
@@ -38,7 +38,7 @@ jobs:
   Rubocop:
     runs-on: ubuntu-latest
     container:
-      image: registry.opensuse.org/yast/sle-15/sp4/containers/yast-ruby:latest
+      image: registry.opensuse.org/yast/head/containers/yast-ruby:latest
 
     steps:
 
@@ -51,7 +51,7 @@ jobs:
   Package:
     runs-on: ubuntu-latest
     container:
-      image: registry.opensuse.org/yast/sle-15/sp4/containers/yast-ruby:latest
+      image: registry.opensuse.org/yast/head/containers/yast-ruby:latest
 
     steps:
 
@@ -64,7 +64,7 @@ jobs:
   Yardoc:
     runs-on: ubuntu-latest
     container:
-      image: registry.opensuse.org/yast/sle-15/sp4/containers/yast-ruby:latest
+      image: registry.opensuse.org/yast/head/containers/yast-ruby:latest
 
     steps:
 
@@ -79,7 +79,7 @@ jobs:
   Checks:
     runs-on: ubuntu-latest
     container:
-      image: registry.opensuse.org/yast/sle-15/sp4/containers/yast-ruby:latest
+      image: registry.opensuse.org/yast/head/containers/yast-ruby:latest
 
     steps:
 
