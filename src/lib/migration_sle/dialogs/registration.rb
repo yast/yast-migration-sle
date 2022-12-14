@@ -110,20 +110,21 @@ module MigrationSle
       # rubocop:disable Layout/HeredocIndentation, Metrics/MethodLength
       def help
         # TRANSLATORS: help text for the main dialog of the online search feature,
+        # the "%{from_system}" is replaced by the current system name, e.g.
+        #   "openSUSE Leap",
         # the "%{to_system}" is replaced by the target system name, e.g.
-        # "SUSE Linux Enterprise", the "%{web}" is replaced by a https:// link
+        #   "SUSE Linux Enterprise",
+        # the "%{web}" is replaced by a https:// link
         text = _(<<-HELP
 <h2>Online Migration to %{to_system}</h2>
 <p>
-  This YaST module can migrate your system to the %{to_system}
-  (SLE) product. The migration is done online, in the currently
-  running system.
+  This YaST module can migrate your %{from_system} system to %{to_system}.
+  The migration is performed online in the running system.
 </p>
 
 <h3>The Advantages of the Enterprise Product</h3>
 <p>
-  The %{to_system} provides several advantages, the most important
-  ones are:
+  The %{to_system} provides several advantages, the most important ones are:
   <ul>
     <li>Certified system</li>
     <li>Technical support (up to 24/7)</li>
@@ -134,8 +135,8 @@ module MigrationSle
 
 <h3>Obtaining a Subscription</h3>
 <p>
-  There are several ways how to buy a SLE product, it is also possible
-  to buy a subscription online. See <i>%{web}</i> for more details.
+  There are several ways to purchase a SLE subscription. See <i>%{web}</i> for
+  details.
 </p>
 
 <h3>Notes</h3>
@@ -148,27 +149,30 @@ module MigrationSle
 <p>
   The migration has several steps:
   <ol>
-    <li>Registering the openSUSE Leap product</li>
-    <li>Adding the SLE repositories</li>
-    <li>Installing the SLE packages</li>
+    <li>Install pending updates (recommended)</li>
+    <li>Register the %{from_system} product</li>
+    <li>Migrate to the %{to_system} product</li>
+    <li>Add the %{to_system} repositories</li>
+    <li>Install the %{to_system} packages</li>
   </ol>
 </p>
 
 <p>
-  After the migration is finished the system should be manually restarted.
+  After completing the migration, restart the system manually.
 </p>
 
 <h3>Input Fields</h3>
 </p>
-  Enter the registration code and E-mail address. If you want to use
-  a local RMT registration server enter its URL instead of
-  the registration code. Leave the E-mail address empty in that case.
+  Enter the registration code and e-mail address. To register with a
+  RMT server, enter its URL instead of the registration code and leave the
+  e-mail address empty.
 </p>
         HELP
                 )
         # rubocop:enable Layout/HeredocIndentation, Metrics/MethodLength
 
-        format(text, to_system: TARGET_SYSTEM, web: "https://www.suse.com/support/")
+        format(text, from_system: current_system, to_system: TARGET_SYSTEM,
+          web: "https://www.suse.com/support/")
       end
 
     private
