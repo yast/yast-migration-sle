@@ -110,8 +110,11 @@ module MigrationSle
       # rubocop:disable Layout/HeredocIndentation, Metrics/MethodLength
       def help
         # TRANSLATORS: help text for the main dialog of the online search feature,
+        # the "%{from_system}" is replaced by the current system name, e.g.
+        #   "openSUSE Leap",
         # the "%{to_system}" is replaced by the target system name, e.g.
-        # "SUSE Linux Enterprise", the "%{web}" is replaced by a https:// link
+        #   "SUSE Linux Enterprise",
+        # the "%{web}" is replaced by a https:// link
         text = _(<<-HELP
 <h2>Online Migration to %{to_system}</h2>
 <p>
@@ -147,9 +150,10 @@ module MigrationSle
   The migration has several steps:
   <ol>
     <li>Install pending updates (recommended)</li>
-    <li>Register the %{to_system} product</li>
-    <li>Add the SLE repositories</li>
-    <li>Install the SLE packages</li>
+    <li>Register the %{from_system} product</li>
+    <li>Migrate to the %{to_system} product</li>
+    <li>Add the %{to_system} repositories</li>
+    <li>Install the %{to_system} packages</li>
   </ol>
 </p>
 
@@ -167,7 +171,8 @@ module MigrationSle
                 )
         # rubocop:enable Layout/HeredocIndentation, Metrics/MethodLength
 
-        format(text, to_system: TARGET_SYSTEM, web: "https://www.suse.com/support/")
+        format(text, from_system: current_system, to_system: TARGET_SYSTEM,
+          web: "https://www.suse.com/support/")
       end
 
     private
