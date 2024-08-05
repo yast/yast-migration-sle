@@ -1,9 +1,8 @@
 # YaST SLE Migration Module
 
-[![Workflow Status](https://github.com/yast/yast-migration-sle/workflows/CI/badge.svg?branch=master)](
+[![CI](https://github.com/yast/yast-migration-sle/workflows/CI/badge.svg?branch=master)](
 https://github.com/yast/yast-migration-sle/actions?query=branch%3Amaster)
-[![Jenkins Status](https://ci.opensuse.org/buildStatus/icon?job=yast-yast-migration-sle-master)](
-https://ci.opensuse.org/view/Yast/job/yast-yast-migration-sle-master/)
+[![OBS](https://github.com/yast/yast-migration-sle/actions/workflows/submit.yml/badge.svg)](https://github.com/yast/yast-migration-sle/actions/workflows/submit.yml)
 [![Coverage Status](https://img.shields.io/coveralls/yast/yast-migration-sle.svg)](https://coveralls.io/r/yast/yast-migration-sle?branch=master)
 
 ![registration dialog](doc/registration_dialog.png)
