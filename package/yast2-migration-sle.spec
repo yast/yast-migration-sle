@@ -17,7 +17,7 @@
 
 
 Name:           yast2-migration-sle
-Version:        4.6.0
+Version:        4.6.1
 Release:        0
 Summary:        YaST2 - Online migration
 Group:          System/YaST
@@ -26,7 +26,6 @@ URL:            https://github.com/yast/yast-migration-sle
 
 Source0:        %{name}-%{version}.tar.bz2
 
-BuildRequires:  update-desktop-files
 BuildRequires:  yast2
 BuildRequires:  yast2-buildtools
 BuildRequires:  yast2-ruby-bindings
